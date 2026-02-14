@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Make sure you have Java 17 or higher installed. You can check your Java version with:
+Make sure you have Java 21 or higher installed. You can check your Java version with:
 
 ```bash
 java -version
@@ -89,7 +89,7 @@ Try these URLs to test the browser:
 
 ### JavaFX Issues
 
-If you encounter JavaFX issues, make sure you have Java 17+ with JavaFX support, or use a distribution that includes JavaFX.
+If you encounter JavaFX issues, make sure you have Java 21+ with JavaFX support, or use a distribution that includes JavaFX.
 
 ### Display Issues
 

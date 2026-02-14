@@ -12,7 +12,7 @@ A minimalistic web browser built in Kotlin with JavaFX, supporting HTTP/1.1, HTT
 
 ## Requirements
 
-- Java 17 or higher
+- Java 21 or higher
 - Gradle 8.5+ (included via wrapper)
 
 ## Building

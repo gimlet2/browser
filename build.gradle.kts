@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "2.1.0"
     application
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
@@ -14,13 +14,13 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.openjfx:javafx-controls:21.0.1")
-    implementation("org.openjfx:javafx-web:21.0.1")
+    implementation("org.openjfx:javafx-controls:23.0.1")
+    implementation("org.openjfx:javafx-web:23.0.1")
     testImplementation(kotlin("test"))
 }
 
 javafx {
-    version = "21.0.1"
+    version = "23.0.1"
     modules = listOf("javafx.controls", "javafx.web")
 }
 
@@ -33,5 +33,5 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }

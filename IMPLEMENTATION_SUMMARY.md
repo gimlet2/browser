@@ -48,10 +48,10 @@ browser/
 
 ### 3. Dependencies
 ```kotlin
-- kotlin-stdlib 1.9.22
+- kotlin-stdlib 2.1.0
 - okhttp 4.12.0 (HTTP/1.1 & HTTP/2)
-- javafx-controls 21.0.1
-- javafx-web 21.0.1 (HTML5/CSS3 rendering)
+- javafx-controls 23.0.1
+- javafx-web 23.0.1 (HTML5/CSS3 rendering)
 ```
 
 ## Testing
@@ -130,11 +130,11 @@ BUILD SUCCESSFUL in 6s
 
 ## Technology Stack
 
-- **Language**: Kotlin 1.9.22
+- **Language**: Kotlin 2.1.0
 - **Build Tool**: Gradle 8.5 with Kotlin DSL
-- **UI Framework**: JavaFX 21.0.1
+- **UI Framework**: JavaFX 23.0.1
 - **HTTP Client**: OkHttp 4.12.0
-- **JVM Target**: Java 17
+- **JVM Target**: Java 21
 - **Testing**: JUnit 5 (Jupiter)
 
 ## Commits
