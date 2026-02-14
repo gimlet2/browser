@@ -12,6 +12,8 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.web.WebView
 import javafx.stage.Stage
+import kotlinx.coroutines.*
+import kotlinx.coroutines.javafx.JavaFx
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Main browser application class with JavaFX UI.
  * Supports HTTP/1.1 and HTTP/2, HTML5 rendering with CSS3.
+ * Uses Kotlin coroutines for asynchronous operations.
  */
 class BrowserApplication : Application() {
     
@@ -28,6 +31,9 @@ class BrowserApplication : Application() {
     private lateinit var backButton: Button
     private lateinit var forwardButton: Button
     private lateinit var reloadButton: Button
+    
+    // Coroutine scope for managing async operations
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     
     // OkHttp client with HTTP/2 support - available for custom network operations
     // Note: WebView is used for rendering as it provides better HTML5/CSS3 support
@@ -79,7 +85,10 @@ class BrowserApplication : Application() {
             HBox.setHgrow(this, Priority.ALWAYS)
             
             setOnAction {
-                loadUrl(text)
+                // Launch coroutine for URL loading
+                applicationScope.launch {
+                    loadUrl(text)
+                }
             }
         }
         
@@ -113,15 +122,17 @@ class BrowserApplication : Application() {
         primaryStage.scene = scene
         primaryStage.show()
         
-        // Load initial page
-        loadUrl("https://example.com")
+        // Load initial page asynchronously
+        applicationScope.launch {
+            loadUrl("https://example.com")
+        }
     }
     
     /**
-     * Loads a URL using OkHttp client with HTTP/2 support.
+     * Loads a URL using coroutines for async operation.
      * Falls back to WebView's built-in loader for better compatibility.
      */
-    private fun loadUrl(url: String) {
+    private suspend fun loadUrl(url: String) = withContext(Dispatchers.JavaFx) {
         var finalUrl = url.trim()
         
         // Add https:// if no protocol specified
@@ -131,7 +142,7 @@ class BrowserApplication : Application() {
         
         // Validate URL
         if (finalUrl.isEmpty()) {
-            return
+            return@withContext
         }
         
         try {
@@ -142,20 +153,19 @@ class BrowserApplication : Application() {
             // Note: OkHttp with HTTP/2 is available for custom network operations
             // but JavaFX WebView provides better HTML5/CSS3 rendering
         } catch (e: Exception) {
-            Platform.runLater {
-                webView.engine.loadContent(
-                    """
-                    <html>
-                    <head><title>Error</title></head>
-                    <body>
-                        <h1>Error loading page</h1>
-                        <p>Could not load: $finalUrl</p>
-                        <p>Error: ${e.message}</p>
-                    </body>
-                    </html>
-                    """.trimIndent()
-                )
-            }
+            // Handle error on JavaFX thread using coroutines
+            webView.engine.loadContent(
+                """
+                <html>
+                <head><title>Error</title></head>
+                <body>
+                    <h1>Error loading page</h1>
+                    <p>Could not load: $finalUrl</p>
+                    <p>Error: ${e.message}</p>
+                </body>
+                </html>
+                """.trimIndent()
+            )
         }
     }
     
@@ -169,6 +179,9 @@ class BrowserApplication : Application() {
     }
     
     override fun stop() {
+        // Cancel all running coroutines
+        applicationScope.cancel()
+        
         // Clean up resources
         httpClient.dispatcher.executorService.shutdown()
         httpClient.connectionPool.evictAll()

@@ -6,13 +6,14 @@ A minimalistic web browser built in Kotlin with JavaFX, supporting HTTP/1.1, HTT
 
 - **HTTP Support**: HTTP/1.1 and HTTP/2 support via OkHttp client
 - **HTML5 & CSS3**: Full HTML5 and CSS3 rendering using JavaFX WebView
+- **Kotlin Coroutines**: Asynchronous operations using Kotlin coroutines
 - **Minimalistic UI**: Clean interface with URL input and navigation controls
 - **Navigation**: Back, forward, and reload functionality
 - **Cross-platform**: Runs on Windows, macOS, and Linux
 
 ## Requirements
 
-- Java 21 or higher
+- Java 25 or higher
 - Gradle 8.5+ (included via wrapper)
 
 ## Building
@@ -47,7 +48,8 @@ Or use the distribution:
 
 ## Architecture
 
-- **BrowserApplication.kt**: Main application class with JavaFX UI
+- **BrowserApplication.kt**: Main application class with JavaFX UI and Kotlin coroutines
+- **Kotlin Coroutines**: Asynchronous operations with kotlinx-coroutines-javafx
 - **OkHttp**: HTTP client with HTTP/2 support
 - **JavaFX WebView**: HTML5/CSS3 rendering engine
 - **Gradle**: Build system with Kotlin DSL

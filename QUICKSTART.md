@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Make sure you have Java 21 or higher installed. You can check your Java version with:
+Make sure you have Java 25 or higher installed. You can check your Java version with:
 
 ```bash
 java -version
@@ -60,6 +60,7 @@ Try these URLs to test the browser:
 ## Features
 
 - **HTTP/2 Support**: Uses OkHttp 4.12.0 with HTTP/2 protocol support
+- **Kotlin Coroutines**: Asynchronous operations for responsive UI
 - **HTML5 & CSS3**: JavaFX WebView engine provides full HTML5 and CSS3 rendering
 - **JavaScript**: Full JavaScript support enabled
 - **History**: Back/forward navigation with history
@@ -89,7 +90,7 @@ Try these URLs to test the browser:
 
 ### JavaFX Issues
 
-If you encounter JavaFX issues, make sure you have Java 21+ with JavaFX support, or use a distribution that includes JavaFX.
+If you encounter JavaFX issues, make sure you have Java 25+ with JavaFX support, or use a distribution that includes JavaFX.
 
 ### Display Issues
 
