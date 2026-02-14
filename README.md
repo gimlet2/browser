@@ -1,123 +1,119 @@
-# Kotlin Web Browser
+# Kotlin-Native Browser Rendering Engine
 
-A web browser built in Kotlin with a **custom rendering engine from scratch** and **Kotlin-Native support**, featuring HTTP/1.1, HTTP/2, HTML5 parsing, and CSS3 styling.
+A browser rendering engine built from scratch in **pure Kotlin-Native**, demonstrating HTML/CSS parsing, layout computation, and rendering without JVM dependencies.
 
 ## Features
 
-### Custom Rendering Engine (Proof of Concept)
-- **Built from Scratch**: Complete HTML/CSS rendering pipeline implemented from scratch
-- **Kotlin Multiplatform**: Rendering engine works on JVM and Kotlin-Native  
-- **Platform-Independent**: Core engine has no platform-specific dependencies
-- **Modular Design**: Separate parsing, styling, layout, and painting phases
-- **Demo Application**: Interactive demo showcasing the custom engine (`./gradlew runDemo`)
+### Custom Rendering Engine
+- **Built from Scratch**: Complete HTML/CSS rendering pipeline
+- **Pure Kotlin-Native**: No JVM, runs as native binary
+- **Zero Dependencies**: Custom parsers, no external libraries
+- **Cross-Platform**: Compiles to native binaries for Linux, macOS, Windows
 
-### Production Browser (JavaFX WebView)
-- **HTTP Support**: HTTP/1.1 and HTTP/2 via OkHttp client
-- **Full Web Support**: Complete HTML5, CSS3, and JavaScript via JavaFX WebView
-- **Minimalistic UI**: Clean interface with URL input and navigation controls
-- **Navigation**: Back, forward, and reload functionality
-
-### Kotlin-Native Support
-- **Native Targets**: Linux (x64), macOS (x64, ARM64), Windows (x64)
-- **Shared Rendering Engine**: The custom rendering engine codebase is shared across all platforms
-- **No JVM Required**: Rendering engine can compile to native binaries
+### Rendering Pipeline
+- **HTML Parser**: Recursive descent parser generating DOM trees
+- **CSS Parser**: Selector matching (tag/id/class), property parsing  
+- **Layout Engine**: CSS box model with width/height/position calculation
+- **Paint Engine**: Display command generation for rendering backends
 
 ## Architecture
 
-The browser consists of two main components:
+The rendering engine implements a complete browser rendering pipeline:
 
-1. **Rendering Engine** (Platform-independent, in `commonMain`):
-   - HTML Parser → DOM Tree
-   - CSS Parser → Stylesheets
-   - Style Tree Builder → Matched styles
-   - Layout Engine → Box positions/dimensions
-   - Paint Engine → Display commands
+```
+HTML/CSS Input → Parse → Style → Layout → Paint → Display Commands
+```
 
-2. **Browser Application** (JVM-specific, in `jvmMain`):
-   - JavaFX UI for display
-   - OkHttp for networking
-   - Navigation and history management
+### Components
 
-See [RENDERING_ENGINE.md](RENDERING_ENGINE.md) for detailed architecture documentation.
+1. **DOM Parser** - Converts HTML to DOM tree
+2. **CSS Parser** - Parses stylesheets and selectors
+3. **Style Tree** - Matches CSS rules to DOM elements
+4. **Layout Engine** - Computes box positions and dimensions
+5. **Paint Engine** - Generates rendering commands
+
+See [RENDERING_ENGINE.md](RENDERING_ENGINE.md) for detailed architecture.
 
 ## Requirements
 
-- Java 25 or higher (for JVM target)
+- Kotlin 2.3.0 or higher
 - Gradle 9.3+ (included via wrapper)
-- Kotlin-Native toolchain (auto-downloaded for native builds)
+- Kotlin-Native toolchain (auto-downloaded on first build)
 
 ## Building
 
-### JVM Build
-To build the JVM version with browser UI:
-
-```bash
-./gradlew build
-```
-
-### Native Builds
-To build for native platforms:
+### Compile Native Binary
 
 ```bash
 # Linux
-./gradlew linuxX64MainKlibrary
+./gradlew linuxX64Binaries
 
-# macOS
-./gradlew macosX64MainKlibrary
-./gradlew macosArm64MainKlibrary
+# macOS (Intel)
+./gradlew macosX64Binaries
+
+# macOS (Apple Silicon)
+./gradlew macosArm64Binaries
 
 # Windows
-./gradlew mingwX64MainKlibrary
+./gradlew mingwX64Binaries
 ```
 
-Note: First native build requires downloading toolchains from download.jetbrains.com.
-
-## Running
-
-### Run the Full Browser (with JavaFX WebView)
-The full browser uses JavaFX WebView for production rendering:
+### Run Native Binary
 
 ```bash
-./gradlew run
+# Linux
+./build/bin/linuxX64/releaseExecutable/browser.kexe
+
+# macOS
+./build/bin/macosX64/releaseExecutable/browser.kexe
+
+# Windows
+./build/bin/mingwX64/releaseExecutable/browser.exe
 ```
 
-### Run the Custom Rendering Engine Demo
-To see the custom rendering engine in action:
+## Demo Output
 
-```bash
-./gradlew runDemo
+The native application demonstrates the rendering engine with several examples:
+
 ```
+============================================================
+Kotlin-Native Browser Rendering Engine
+============================================================
 
-This demo application showcases the from-scratch rendering engine rendering HTML/CSS to a JavaFX Canvas. You can:
-- Enter custom HTML and CSS
-- See live rendering results
-- Try example layouts
-- Observe the rendering pipeline in action
+Example 1: Simple HTML
+------------------------------------------------------------
+HTML:
+<div>
+    <h1>Hello from Kotlin-Native!</h1>
+    <p>This is rendered by the custom engine.</p>
+</div>
 
-**Note**: The full browser currently uses JavaFX WebView for production rendering as it provides complete HTML5/CSS3/JavaScript support. The custom rendering engine is functional and available as a separate component, demonstrating the core rendering concepts implemented from scratch.
+CSS:
+div {
+    background-color: #f0f0f0;
+    padding: 20px;
+}
 
-## Usage
-
-1. Launch the browser using the run command
-2. Enter a URL in the address bar (e.g., `https://example.com`)
-3. Press Enter or click the navigation buttons to browse
-4. Use the back (←), forward (→), and reload (⟳) buttons to navigate
+Generated 5 display commands:
+  1. Fill rectangle (x=0.0, y=0.0, w=800.0, h=150.0) with color rgb(240, 240, 240)
+  2. Draw text 'Hello from Kotlin-Native!' at (x=20.0, y=20.0)
+  3. Draw text 'This is rendered by the custom engine.' at (x=20.0, y=50.0)
+  ...
+```
 
 ## Testing
 
-Run all tests:
-```bash
-./gradlew test
-```
+Run native tests:
 
-Run rendering engine tests only:
 ```bash
-./gradlew test --tests "com.gimlet2.browser.rendering.*"
-```
+# Linux
+./gradlew linuxX64Test
 
-Run JVM-specific tests:
-```bash
-./gradlew jvmTest
+# macOS
+./gradlew macosX64Test
+
+# Windows
+./gradlew mingwX64Test
 ```
 
 ## Project Structure
@@ -129,69 +125,83 @@ browser/
 │   │   └── com/gimlet2/browser/rendering/
 │   │       ├── Dom.kt              # DOM data structures
 │   │       ├── HtmlParser.kt       # HTML parser
-│   │       ├── Css.kt              # CSS parser and data structures
-│   │       ├── Layout.kt           # Layout engine (box model)
+│   │       ├── Css.kt              # CSS parser
+│   │       ├── Layout.kt           # Layout engine
 │   │       ├── Rendering.kt        # Paint engine
-│   │       └── BrowserRenderingEngine.kt  # Main facade
-│   ├── commonTest/kotlin/          # Multiplatform tests
-│   ├── jvmMain/kotlin/             # JVM browser application
+│   │       └── BrowserRenderingEngine.kt
+│   ├── commonTest/kotlin/          # Tests
+│   ├── nativeMain/kotlin/          # Native-specific code
 │   │   └── com/gimlet2/browser/
-│   │       └── BrowserApplication.kt
-│   └── jvmTest/kotlin/             # JVM-specific tests
-├── build.gradle.kts                # Kotlin Multiplatform configuration
-├── RENDERING_ENGINE.md             # Detailed rendering engine docs
+│   │       └── Main.kt             # Native entry point
+│   └── nativeTest/kotlin/          # Native tests
+├── build.gradle.kts                # Kotlin-Native build config
 └── README.md                       # This file
 ```
+
+## Technology Stack
+
+- **Language**: Kotlin 2.3.0
+- **Runtime**: Kotlin-Native (no JVM)
+- **Build Tool**: Gradle 9.3.1
+- **Targets**: Linux x64, macOS x64/ARM64, Windows x64
+- **Dependencies**: None (all parsers/engines built from scratch)
 
 ## Rendering Engine Features
 
 ### HTML Parser
-- Nested elements
-- Attributes (quoted/unquoted)
-- Self-closing tags
-- Text nodes
-- Element queries (by ID, tag, class)
+✅ Nested elements
+✅ Attributes (quoted/unquoted)
+✅ Self-closing tags
+✅ Text nodes
+✅ Element queries (by ID, tag, class)
 
-### CSS Parser
-- Tag selectors (`div`)
-- ID selectors (`#main`)
-- Class selectors (`.container`)
-- Color values (hex: `#ff0000`)
-- Length values with units (`10px`, `2em`)
-- Multiple properties per rule
+### CSS Parser  
+✅ Tag selectors (`div`)
+✅ ID selectors (`#main`)
+✅ Class selectors (`.container`)
+✅ Color values (hex: `#ff0000`)
+✅ Length values (`10px`, `2em`)
+✅ Multiple properties per rule
 
 ### Layout Engine
-- CSS box model (margin, border, padding, content)
-- Block layout
-- Width/height calculation
-- Position calculation
-- Display property (block, inline, none)
+✅ CSS box model (margin, border, padding, content)
+✅ Block layout
+✅ Width/height calculation
+✅ Position calculation
+✅ Display property (block, inline, none)
 
-### Limitations
-Current implementation is a simplified version with:
+### Current Limitations
+
+This is a simplified rendering engine for educational purposes:
 - Block layout only (no flexbox/grid)
 - Limited CSS property support
 - No JavaScript execution
 - No image rendering
-- Basic text rendering
+- No network stack
 
-These can be extended as the project evolves.
+These can be extended as needed.
 
-## Technology Stack
+## Performance
 
-- **Language**: Kotlin 2.3.0 (Multiplatform)
-- **Build Tool**: Gradle 9.3.1 with Kotlin DSL
-- **UI Framework**: JavaFX 23.0.1 (JVM only)
-- **HTTP Client**: OkHttp 4.12.0 (JVM only)
-- **JVM Target**: Java 25
-- **Testing**: JUnit 5 (Jupiter) + kotlin-test
+The rendering engine is designed for reasonable performance:
+
+- **Parsing**: O(n) where n is input size
+- **Styling**: O(elements × rules)
+- **Layout**: O(elements) single-pass layout
+- **Painting**: O(elements) for display list generation
+
+## Why Kotlin-Native?
+
+1. **Native Performance**: Compiles to machine code, no JVM overhead
+2. **Small Binaries**: No runtime, smaller executables
+3. **Cross-Platform**: Single codebase for all native platforms
+4. **Memory Efficient**: Direct memory management
+5. **Modern Language**: Kotlin's safety and expressiveness
 
 ## Documentation
 
 - [RENDERING_ENGINE.md](RENDERING_ENGINE.md) - Rendering engine architecture
-- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Implementation details
-- [QUICKSTART.md](QUICKSTART.md) - Quick start guide
-- [UI_DOCUMENTATION.md](UI_DOCUMENTATION.md) - UI reference
+- [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) - Implementation details
 
 ## License
 
