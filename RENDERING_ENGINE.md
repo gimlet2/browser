@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the custom rendering engine built from scratch for the Kotlin browser project. The rendering engine is designed as a Kotlin Multiplatform library, making it compatible with both JVM and Kotlin-Native targets.
+This document describes the custom rendering engine built from scratch for the Kotlin-Native browser project. The rendering engine is designed as a pure Kotlin-Native library with zero dependencies, demonstrating browser rendering concepts in native code.
 
 ## Architecture
 
@@ -123,13 +123,13 @@ val engine = BrowserRenderingEngine()
 val displayList = engine.render(htmlContent, cssContent, 800f, 600f)
 ```
 
-## Kotlin Multiplatform Structure
+## Kotlin-Native Structure
 
-The project uses Kotlin Multiplatform with the following source sets:
+The project uses Kotlin-Native with the following source sets:
 
 ```
 src/
-├── commonMain/         # Platform-agnostic rendering engine
+├── commonMain/         # Platform-agnostic rendering engine (shared across all native targets)
 │   └── kotlin/
 │       └── com/gimlet2/browser/rendering/
 │           ├── Dom.kt
@@ -138,27 +138,24 @@ src/
 │           ├── Layout.kt
 │           ├── Rendering.kt
 │           └── BrowserRenderingEngine.kt
-├── commonTest/         # Multiplatform tests
+├── commonTest/         # Tests (shared across all native targets)
 │   └── kotlin/
 │       └── com/gimlet2/browser/rendering/
 │           ├── HtmlParserTest.kt
 │           ├── CssParserTest.kt
 │           └── RenderingEngineTest.kt
-├── jvmMain/           # JVM-specific browser application
+├── nativeMain/         # Native-specific code
 │   └── kotlin/
 │       └── com/gimlet2/browser/
-│           └── BrowserApplication.kt
-└── jvmTest/           # JVM-specific tests
+│           └── Main.kt         # Native entry point
+└── nativeTest/         # Native-specific tests
     └── kotlin/
-        └── com/gimlet2/browser/
-            ├── BrowserApplicationTest.kt
-            ├── HttpProtocolTest.kt
-            └── UrlValidationTest.kt
+        └── com/gimlet2/browser/rendering/
 ```
 
 ## Native Target Support
 
-The rendering engine is designed to work with Kotlin-Native. Supported targets:
+The rendering engine compiles to native binaries for multiple platforms:
 
 - **Linux**: `linuxX64`
 - **macOS Intel**: `macosX64`
@@ -169,11 +166,18 @@ The rendering engine is designed to work with Kotlin-Native. Supported targets:
 
 ```bash
 # Build for specific platform
-./gradlew linuxX64MainKlibrary
-./gradlew macosX64MainKlibrary
-
-# Create native binaries
 ./gradlew linuxX64Binaries
+./gradlew macosX64Binaries
+./gradlew macosArm64Binaries
+./gradlew mingwX64Binaries
+
+# Run native binary
+./gradlew linuxX64Binaries
+./gradlew macosX64Binaries
+
+# Run the binary
+./build/bin/linuxX64/releaseExecutable/browser.kexe
+./build/bin/macosX64/releaseExecutable/browser.kexe
 ```
 
 Note: First-time native compilation requires downloading Kotlin-Native toolchains from `download.jetbrains.com`.
@@ -182,27 +186,29 @@ Note: First-time native compilation requires downloading Kotlin-Native toolchain
 
 ### Why Custom Rendering Engine?
 
-1. **Platform Independence**: JavaFX is JVM-only; custom engine works with Kotlin-Native
-2. **Learning**: Understanding browser internals
+1. **Educational**: Understanding browser internals from first principles
+2. **Zero Dependencies**: All parsers and engines built from scratch
 3. **Control**: Full control over rendering pipeline
-4. **Lightweight**: Minimal dependencies
+4. **Lightweight**: No external dependencies, minimal code
 
-### Why Kotlin Multiplatform?
+### Why Kotlin-Native?
 
-1. **Code Reuse**: Single codebase for all platforms
-2. **Type Safety**: Kotlin's type system catches errors
-3. **Native Performance**: Kotlin-Native compiles to native code
-4. **Ecosystem**: Access to platform-specific APIs when needed
+1. **Native Performance**: Compiles to machine code, no runtime overhead
+2. **Small Binaries**: No JVM, smaller executables
+3. **Cross-Platform**: Single codebase compiles to all native platforms
+4. **Type Safety**: Kotlin's type system catches errors at compile time
+5. **Modern Language**: Kotlin's safety and expressiveness
 
 ### Limitations
 
-Current implementation is simplified:
+Current implementation is simplified for educational purposes:
 
 - **Layout**: Only block layout (no flexbox, grid)
 - **CSS**: Limited property support
 - **JavaScript**: Not implemented
 - **Images**: Not implemented
 - **Fonts**: Basic text rendering only
+- **Network**: No HTTP client
 
 These can be extended as needed.
 
@@ -211,11 +217,13 @@ These can be extended as needed.
 All rendering engine components have comprehensive tests:
 
 ```bash
-# Run all tests (JVM)
-./gradlew jvmTest
+# Run all tests
+./gradlew allTests
 
-# Run specific test
-./gradlew test --tests "com.gimlet2.browser.rendering.HtmlParserTest"
+# Run tests for specific platform
+./gradlew linuxX64Test
+./gradlew macosX64Test
+./gradlew mingwX64Test
 ```
 
 ## Usage Example
