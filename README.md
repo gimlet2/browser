@@ -1,6 +1,6 @@
 # Kotlin-Native Browser Rendering Engine
 
-A browser rendering engine built from scratch in **pure Kotlin-Native**, demonstrating HTML/CSS parsing, layout computation, and rendering without JVM dependencies.
+A browser rendering engine built from scratch in **pure Kotlin-Native**, demonstrating HTML/CSS parsing, layout computation, and **actual graphics rendering** without JVM dependencies.
 
 ## Features
 
@@ -9,19 +9,28 @@ A browser rendering engine built from scratch in **pure Kotlin-Native**, demonst
 - **Pure Kotlin-Native**: No JVM, runs as native binary
 - **Zero Dependencies**: Custom parsers, no external libraries
 - **Cross-Platform**: Compiles to native binaries for Linux, macOS, Windows
+- **✨ Graphics Output**: Renders to actual images (PPM format)
 
 ### Rendering Pipeline
 - **HTML Parser**: Recursive descent parser generating DOM trees
 - **CSS Parser**: Selector matching (tag/id/class), property parsing  
 - **Layout Engine**: CSS box model with width/height/position calculation
 - **Paint Engine**: Display command generation for rendering backends
+- **Graphics Renderer**: Framebuffer-based pixel rendering with visual output
+
+### Browser UI
+- **Visual Output**: Creates actual images of rendered HTML/CSS
+- **Browser Chrome**: Simulated browser toolbar and URL bar
+- **Styled Content**: Full CSS styling with colors, borders, padding
+- **Text Rendering**: Basic text display (8x12 bitmap font)
+- **Image Export**: PPM format (convertible to PNG/JPEG)
 
 ## Architecture
 
-The rendering engine implements a complete browser rendering pipeline:
+The rendering engine implements a complete browser rendering pipeline with graphics output:
 
 ```
-HTML/CSS Input → Parse → Style → Layout → Paint → Display Commands
+HTML/CSS Input → Parse → Style → Layout → Paint → Display Commands → Graphics → Image
 ```
 
 ### Components
@@ -31,8 +40,10 @@ HTML/CSS Input → Parse → Style → Layout → Paint → Display Commands
 3. **Style Tree** - Matches CSS rules to DOM elements
 4. **Layout Engine** - Computes box positions and dimensions
 5. **Paint Engine** - Generates rendering commands
+6. **Graphics Renderer** - Renders to framebuffer and outputs images
 
 See [RENDERING_ENGINE.md](RENDERING_ENGINE.md) for detailed architecture.
+See [GRAPHICS_RENDERING.md](GRAPHICS_RENDERING.md) for graphics implementation details.
 
 ## Requirements
 
@@ -73,10 +84,58 @@ See [RENDERING_ENGINE.md](RENDERING_ENGINE.md) for detailed architecture.
 
 ## Demo Output
 
-The native application demonstrates the rendering engine with several examples:
+The native application renders a browser-like UI with actual graphics:
 
 ```
 ============================================================
+Kotlin-Native Browser with Graphics UI
+============================================================
+
+Rendering HTML page with browser UI...
+
+Generated 25 display commands
+Browser UI rendered to: browser_output.ppm
+
+============================================================
+```
+
+### Visual Output
+
+The application creates an 800x600 pixel image showing:
+- **Browser Chrome**: Gray toolbar at the top
+- **URL Bar**: White input field with border showing "https://example.com"
+- **Content Area**: White background with styled HTML content
+- **Heading**: "Welcome to Kotlin-Native Browser!" in dark blue
+- **Paragraphs**: Descriptive text in gray
+- **Styled Box**: Light gray box with borders containing features
+
+### Output Formats
+
+**PPM Image** (Primary output):
+```bash
+browser_output.ppm  # 800x600 RGB image
+```
+
+**Convert to PNG** (if ImageMagick installed):
+```bash
+convert browser_output.ppm browser_output.png
+```
+
+### Example HTML Rendered
+
+```html
+<div class="browser-chrome">
+    <div class="url-bar">https://example.com</div>
+</div>
+<div class="content">
+    <h1>Welcome to Kotlin-Native Browser!</h1>
+    <p>This is rendered by the custom engine.</p>
+    <div class="box">
+        <h2>Features</h2>
+        <p>Custom HTML/CSS rendering</p>
+        <p>Native graphics output</p>
+    </div>
+</div>
 Kotlin-Native Browser Rendering Engine
 ============================================================
 

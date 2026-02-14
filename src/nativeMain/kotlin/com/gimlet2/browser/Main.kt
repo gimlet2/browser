@@ -1,140 +1,117 @@
 package com.gimlet2.browser
 
 import com.gimlet2.browser.rendering.*
+import com.gimlet2.browser.ui.*
 
 /**
- * Main entry point for the Kotlin-Native browser rendering engine
- * Demonstrates the custom rendering engine built from scratch
+ * Main entry point for the Kotlin-Native browser with UI rendering
+ * Demonstrates the custom rendering engine with actual graphics output
  */
 fun main() {
     println("=".repeat(60))
-    println("Kotlin-Native Browser Rendering Engine")
+    println("Kotlin-Native Browser with Graphics UI")
     println("=".repeat(60))
     println()
     
     // Create rendering engine instance
     val engine = BrowserRenderingEngine()
     
-    // Example 1: Simple HTML
-    println("Example 1: Simple HTML")
-    println("-".repeat(60))
-    val html1 = """
-        <div>
-            <h1>Hello from Kotlin-Native!</h1>
+    // Create framebuffer for rendering
+    val width = 800
+    val height = 600
+    val framebuffer = Framebuffer(width, height)
+    val renderer = GraphicsRenderer(framebuffer)
+    
+    // Example: Simple HTML page with browser UI
+    println("Rendering HTML page with browser UI...")
+    val html = """
+        <div class="browser-chrome">
+            <div class="url-bar">https://example.com</div>
+        </div>
+        <div class="content">
+            <h1>Welcome to Kotlin-Native Browser!</h1>
             <p>This is rendered by the custom engine.</p>
+            <div class="box">
+                <h2>Features</h2>
+                <p>Custom HTML/CSS rendering</p>
+                <p>Native graphics output</p>
+            </div>
         </div>
     """.trimIndent()
     
-    val css1 = """
-        div {
-            background-color: #f0f0f0;
+    val css = """
+        .browser-chrome {
+            background-color: #e8e8e8;
+            padding: 5px;
+            margin: 0px;
+        }
+        .url-bar {
+            background-color: #ffffff;
+            color: #333333;
+            padding: 8px;
+            margin: 5px;
+            border-color: #cccccc;
+            border-width: 1px;
+        }
+        .content {
+            background-color: #ffffff;
             padding: 20px;
+            margin: 10px;
         }
         h1 {
             color: #2c3e50;
-        }
-        p {
-            color: #34495e;
-        }
-    """.trimIndent()
-    
-    println("HTML:")
-    println(html1)
-    println()
-    println("CSS:")
-    println(css1)
-    println()
-    
-    val displayList1 = engine.render(html1, css1, 800f, 600f)
-    println("Generated ${displayList1.commands.size} display commands:")
-    for ((index, command) in displayList1.commands.withIndex()) {
-        println("  ${index + 1}. ${describeCommand(command)}")
-    }
-    println()
-    
-    // Example 2: Styled Box
-    println("Example 2: Styled Box with Border")
-    println("-".repeat(60))
-    val html2 = """
-        <div class="box">
-            <h2>Styled Container</h2>
-            <p>This box has background, padding, and borders.</p>
-        </div>
-    """.trimIndent()
-    
-    val css2 = """
-        .box {
-            background-color: #3498db;
-            color: #ffffff;
-            padding: 15px;
             margin: 10px;
-            border-color: #2980b9;
-            border-width: 2px;
-            width: 400px;
         }
         h2 {
+            color: #34495e;
             margin: 10px;
         }
         p {
+            color: #555555;
             margin: 10px;
         }
-    """.trimIndent()
-    
-    println("HTML:")
-    println(html2)
-    println()
-    println("CSS:")
-    println(css2)
-    println()
-    
-    val displayList2 = engine.render(html2, css2, 800f, 600f)
-    println("Generated ${displayList2.commands.size} display commands:")
-    for ((index, command) in displayList2.commands.withIndex()) {
-        println("  ${index + 1}. ${describeCommand(command)}")
-    }
-    println()
-    
-    // Example 3: Multiple Elements
-    println("Example 3: Multiple Elements")
-    println("-".repeat(60))
-    val html3 = """
-        <div id="container">
-            <div class="item">Item 1</div>
-            <div class="item">Item 2</div>
-            <div class="item">Item 3</div>
-        </div>
-    """.trimIndent()
-    
-    val css3 = """
-        #container {
+        .box {
             background-color: #ecf0f1;
-            padding: 10px;
-        }
-        .item {
-            background-color: #e74c3c;
-            color: #ffffff;
-            padding: 10px;
-            margin: 5px;
+            padding: 15px;
+            margin: 10px;
+            border-color: #bdc3c7;
+            border-width: 2px;
         }
     """.trimIndent()
     
     println("HTML:")
-    println(html3)
+    println(html)
     println()
     println("CSS:")
-    println(css3)
+    println(css)
     println()
     
-    val displayList3 = engine.render(html3, css3, 800f, 600f)
-    println("Generated ${displayList3.commands.size} display commands:")
-    for ((index, command) in displayList3.commands.withIndex()) {
+    // Render HTML/CSS to display list
+    val displayList = engine.render(html, css, width.toFloat(), height.toFloat())
+    println("Generated ${displayList.commands.size} display commands")
+    
+    // Render display commands to framebuffer
+    renderer.render(displayList)
+    
+    // Save framebuffer as image
+    val outputFile = "browser_output.ppm"
+    framebuffer.savePPM(outputFile)
+    
+    println()
+    println("=".repeat(60))
+    println("Browser UI rendered to: $outputFile")
+    println("Convert to PNG with: convert $outputFile browser_output.png")
+    println("=".repeat(60))
+    
+    // Also show text representation
+    println()
+    println("Display Commands (first 10):")
+    for ((index, command) in displayList.commands.take(10).withIndex()) {
         println("  ${index + 1}. ${describeCommand(command)}")
     }
-    println()
-    
-    println("=".repeat(60))
-    println("Rendering engine demonstration complete!")
-    println("=".repeat(60))
+    if (displayList.commands.size > 10) {
+        println("  ... and ${displayList.commands.size - 10} more commands")
+    }
 }
 
 /**
