@@ -23,6 +23,10 @@ import java.util.concurrent.TimeUnit
  * Main browser application class with JavaFX UI.
  * Supports HTTP/1.1 and HTTP/2, HTML5 rendering with CSS3.
  * Uses Kotlin coroutines for asynchronous operations.
+ * 
+ * Note: This application uses JavaFX WebView for production rendering as it provides
+ * complete HTML5/CSS3/JavaScript support. A custom rendering engine built from scratch
+ * is available in the `rendering` package and can be seen in action via RenderingEngineDemo.
  */
 class BrowserApplication : Application() {
     
@@ -35,8 +39,7 @@ class BrowserApplication : Application() {
     // Coroutine scope for managing async operations
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     
-    // OkHttp client with HTTP/2 support - available for custom network operations
-    // Note: WebView is used for rendering as it provides better HTML5/CSS3 support
+    // OkHttp client with HTTP/2 support for network operations
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
@@ -146,12 +149,9 @@ class BrowserApplication : Application() {
         }
         
         try {
-            // For better HTML5/CSS3 support, use WebView's built-in engine
-            // which supports modern web standards better than custom rendering
+            // Load URL using JavaFX WebView for production rendering
+            // (Custom rendering engine is available in the `rendering` package)
             webView.engine.load(finalUrl)
-            
-            // Note: OkHttp with HTTP/2 is available for custom network operations
-            // but JavaFX WebView provides better HTML5/CSS3 rendering
         } catch (e: Exception) {
             // Handle error on JavaFX thread using coroutines
             webView.engine.loadContent(

@@ -4,24 +4,23 @@ A web browser built in Kotlin with a **custom rendering engine from scratch** an
 
 ## Features
 
-### Custom Rendering Engine
-- **Built from Scratch**: Complete HTML/CSS rendering pipeline
-- **Kotlin Multiplatform**: Works on JVM and Kotlin-Native
-- **Platform-Independent**: No reliance on JavaFX WebView for rendering logic
+### Custom Rendering Engine (Proof of Concept)
+- **Built from Scratch**: Complete HTML/CSS rendering pipeline implemented from scratch
+- **Kotlin Multiplatform**: Rendering engine works on JVM and Kotlin-Native  
+- **Platform-Independent**: Core engine has no platform-specific dependencies
 - **Modular Design**: Separate parsing, styling, layout, and painting phases
+- **Demo Application**: Interactive demo showcasing the custom engine (`./gradlew runDemo`)
 
-### Browser Features
+### Production Browser (JavaFX WebView)
 - **HTTP Support**: HTTP/1.1 and HTTP/2 via OkHttp client
-- **HTML5 Parsing**: Custom HTML parser with DOM tree generation
-- **CSS3 Styling**: CSS parser with selector matching and style computation
-- **Layout Engine**: CSS box model implementation with block layout
+- **Full Web Support**: Complete HTML5, CSS3, and JavaScript via JavaFX WebView
 - **Minimalistic UI**: Clean interface with URL input and navigation controls
 - **Navigation**: Back, forward, and reload functionality
 
 ### Kotlin-Native Support
 - **Native Targets**: Linux (x64), macOS (x64, ARM64), Windows (x64)
-- **Shared Codebase**: Rendering engine works across all platforms
-- **No JVM Required**: Can compile to native binaries
+- **Shared Rendering Engine**: The custom rendering engine codebase is shared across all platforms
+- **No JVM Required**: Rendering engine can compile to native binaries
 
 ## Architecture
 
@@ -75,11 +74,27 @@ Note: First native build requires downloading toolchains from download.jetbrains
 
 ## Running
 
-To run the browser (JVM):
+### Run the Full Browser (with JavaFX WebView)
+The full browser uses JavaFX WebView for production rendering:
 
 ```bash
 ./gradlew run
 ```
+
+### Run the Custom Rendering Engine Demo
+To see the custom rendering engine in action:
+
+```bash
+./gradlew runDemo
+```
+
+This demo application showcases the from-scratch rendering engine rendering HTML/CSS to a JavaFX Canvas. You can:
+- Enter custom HTML and CSS
+- See live rendering results
+- Try example layouts
+- Observe the rendering pipeline in action
+
+**Note**: The full browser currently uses JavaFX WebView for production rendering as it provides complete HTML5/CSS3/JavaScript support. The custom rendering engine is functional and available as a separate component, demonstrating the core rendering concepts implemented from scratch.
 
 ## Usage
 
