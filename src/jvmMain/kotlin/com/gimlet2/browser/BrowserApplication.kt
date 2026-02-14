@@ -14,10 +14,6 @@ import javafx.scene.web.WebView
 import javafx.stage.Stage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.util.concurrent.TimeUnit
 
 /**
  * Main browser application class with JavaFX UI.
@@ -38,13 +34,6 @@ class BrowserApplication : Application() {
     
     // Coroutine scope for managing async operations
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    
-    // OkHttp client with HTTP/2 support for network operations
-    private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .build()
     
     override fun start(primaryStage: Stage) {
         primaryStage.title = "Kotlin Browser"
@@ -181,10 +170,6 @@ class BrowserApplication : Application() {
     override fun stop() {
         // Cancel all running coroutines
         applicationScope.cancel()
-        
-        // Clean up resources
-        httpClient.dispatcher.executorService.shutdown()
-        httpClient.connectionPool.evictAll()
         super.stop()
     }
 }
