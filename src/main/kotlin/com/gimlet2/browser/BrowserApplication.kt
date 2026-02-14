@@ -29,6 +29,8 @@ class BrowserApplication : Application() {
     private lateinit var forwardButton: Button
     private lateinit var reloadButton: Button
     
+    // OkHttp client with HTTP/2 support - available for custom network operations
+    // Note: WebView is used for rendering as it provides better HTML5/CSS3 support
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)

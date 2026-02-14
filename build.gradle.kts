@@ -14,7 +14,6 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.jsoup:jsoup:1.17.2")
     implementation("org.openjfx:javafx-controls:21.0.1")
     implementation("org.openjfx:javafx-web:21.0.1")
     testImplementation(kotlin("test"))
