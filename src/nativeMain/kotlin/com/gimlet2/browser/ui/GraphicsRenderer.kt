@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package com.gimlet2.browser.ui
 
 import com.gimlet2.browser.rendering.*
