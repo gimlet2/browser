@@ -135,7 +135,7 @@ BUILD SUCCESSFUL in 6s
 ## Technology Stack
 
 - **Language**: Kotlin 2.3.0
-- **Build Tool**: Gradle 8.5 with Kotlin DSL
+- **Build Tool**: Gradle 9.3.1 with Kotlin DSL
 - **UI Framework**: JavaFX 23.0.1
 - **HTTP Client**: OkHttp 4.12.0
 - **JVM Target**: Java 25
