@@ -1,110 +1,183 @@
-# Quick Start Guide
+# Quick Start Guide - Kotlin-Native Browser Rendering Engine
 
 ## Prerequisites
 
-Make sure you have Java 25 or higher installed. You can check your Java version with:
+- Kotlin 2.3.0 or higher (included via Gradle wrapper)
+- Gradle 9.3+ (included via wrapper)
+- No JVM required!
+
+## Build Native Binary
+
+### Option 1: Build for Your Platform
 
 ```bash
-java -version
+# Determine your platform first
+uname -s  # Linux, Darwin (macOS), or MINGW (Windows)
+
+# Build for Linux
+./gradlew linuxX64Binaries
+
+# Build for macOS Intel
+./gradlew macosX64Binaries
+
+# Build for macOS Apple Silicon
+./gradlew macosArm64Binaries
+
+# Build for Windows
+./gradlew mingwX64Binaries
 ```
 
-## Build and Run
-
-### Option 1: Using Gradle Run
-
-The simplest way to run the browser:
+### Option 2: Build All Targets
 
 ```bash
-./gradlew run
+./gradlew allBinaries
 ```
 
-### Option 2: Build and Run Distribution
+## Run the Native Application
 
-Build the distribution and run it:
+After building, run the native binary:
 
 ```bash
-# Build the distribution
-./gradlew installDist
+# Linux
+./build/bin/linuxX64/releaseExecutable/browser.kexe
 
-# Run the browser
-./build/install/browser/bin/browser
+# macOS Intel
+./build/bin/macosX64/releaseExecutable/browser.kexe
+
+# macOS Apple Silicon
+./build/bin/macosArm64/releaseExecutable/browser.kexe
+
+# Windows
+./build/bin/mingwX64/releaseExecutable/browser.exe
 ```
 
-### Option 3: Create Zip Distribution
+## What You'll See
 
-Create a portable zip file:
+The application demonstrates the custom rendering engine with three examples:
 
-```bash
-./gradlew distZip
 ```
+============================================================
+Kotlin-Native Browser Rendering Engine
+============================================================
 
-The zip file will be created in `build/distributions/browser-1.0.0.zip`
+Example 1: Simple HTML
+------------------------------------------------------------
+HTML:
+<div>
+    <h1>Hello from Kotlin-Native!</h1>
+    <p>This is rendered by the custom engine.</p>
+</div>
 
-## Usage
-
-1. **Enter a URL**: Type a URL in the address bar (e.g., `example.com` or `https://www.google.com`)
-2. **Navigate**: Press Enter to load the page
-3. **Use Controls**:
-   - **←** (Back): Go to the previous page
-   - **→** (Forward): Go to the next page
-   - **⟳** (Reload): Refresh the current page
-
-## Testing URLs
-
-Try these URLs to test the browser:
-- `example.com` - Simple example page
-- `https://www.google.com` - Google search
-- `https://github.com` - GitHub (HTTP/2 support)
-- `https://www.wikipedia.org` - Wikipedia
+Generated 5 display commands:
+  1. Fill rectangle (x=0.0, y=0.0, w=800.0, h=150.0) ...
+  2. Draw text 'Hello from Kotlin-Native!' at (x=20.0, y=20.0)
+  ...
+```
 
 ## Features
 
-- **HTTP/2 Support**: Uses OkHttp 4.12.0 with HTTP/2 protocol support
-- **Kotlin Coroutines**: Asynchronous operations for responsive UI
-- **HTML5 & CSS3**: JavaFX WebView engine provides full HTML5 and CSS3 rendering
-- **JavaScript**: Full JavaScript support enabled
-- **History**: Back/forward navigation with history
-- **Auto-HTTPS**: Automatically adds `https://` if no protocol specified
+- **Pure Native**: No JVM, compiles to native machine code
+- **Zero Dependencies**: All HTML/CSS parsing built from scratch
+- **Cross-Platform**: Single codebase for Linux, macOS, Windows
+- **Small Binaries**: No runtime dependencies
+- **Fast**: Native performance
 
 ## Development
 
 ### Run Tests
 
 ```bash
-./gradlew test
-```
+# Run all tests
+./gradlew allTests
 
-### Build
-
-```bash
-./gradlew build
+# Run tests for specific platform
+./gradlew linuxX64Test
+./gradlew macosX64Test
+./gradlew macosArm64Test
+./gradlew mingwX64Test
 ```
 
 ### Clean Build
 
 ```bash
-./gradlew clean build
+./gradlew clean
+./gradlew linuxX64Binaries
+```
+
+### Debug Build
+
+By default, release binaries are built. For debug builds:
+
+```bash
+./gradlew linuxX64DebugBinaries
+./build/bin/linuxX64/debugExecutable/browser.kexe
 ```
 
 ## Troubleshooting
 
-### JavaFX Issues
+### Kotlin-Native Toolchain Download
 
-If you encounter JavaFX issues, make sure you have Java 25+ with JavaFX support, or use a distribution that includes JavaFX.
+First-time compilation downloads Kotlin-Native toolchains from `download.jetbrains.com`. This requires:
+- Internet connection
+- ~500MB disk space
+- 5-10 minutes for initial download
 
-### Display Issues
+If download fails:
+1. Check internet connection
+2. Check firewall settings
+3. Try again later (servers may be temporarily unavailable)
 
-On Linux, if you get display-related errors, you may need to set the `DISPLAY` environment variable:
+### Build Errors
+
+If you encounter build errors:
 
 ```bash
-export DISPLAY=:0
-./gradlew run
+# Clean everything
+./gradlew clean
+
+# Clear Gradle cache
+rm -rf ~/.gradle/caches/
+
+# Try again
+./gradlew linuxX64Binaries
 ```
 
-### Memory Issues
+### Platform-Specific Issues
 
-If the browser uses too much memory, you can adjust JVM settings in `gradle.properties`:
-
-```properties
-org.gradle.jvmargs=-Xmx1g
+**Linux**: Ensure you have `gcc` and `g++` installed
+```bash
+sudo apt-get install build-essential
 ```
+
+**macOS**: Install Xcode Command Line Tools
+```bash
+xcode-select --install
+```
+
+**Windows**: Install MinGW-w64 or use MSYS2
+
+## Performance
+
+Native binaries are:
+- **Fast**: Compiled to machine code
+- **Small**: ~2-5 MB (depending on platform)
+- **Efficient**: No JVM overhead
+- **Portable**: Single executable file
+
+## What's Included
+
+The rendering engine demonstrates:
+
+1. **HTML Parser**: Converts HTML strings to DOM trees
+2. **CSS Parser**: Parses selectors and properties
+3. **Layout Engine**: Computes CSS box model positions/sizes
+4. **Paint Engine**: Generates display commands
+
+See [RENDERING_ENGINE.md](RENDERING_ENGINE.md) for architecture details.
+
+## Next Steps
+
+- Explore the source code in `src/commonMain/kotlin/`
+- Modify examples in `src/nativeMain/kotlin/Main.kt`
+- Run tests to see how components work
+- Read [RENDERING_ENGINE.md](RENDERING_ENGINE.md) for architecture details

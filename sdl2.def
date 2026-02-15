@@ -1,0 +1,8 @@
+headers = SDL.h
+headerFilter = SDL*
+compilerOpts.linux = -I/usr/include/SDL2 -D_REENTRANT
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lSDL2
+compilerOpts.osx = -I/opt/homebrew/include/SDL2 -I/usr/local/include/SDL2
+linkerOpts.osx = -L/opt/homebrew/lib -L/usr/local/lib -lSDL2
+compilerOpts.mingw = -I/mingw64/include/SDL2
+linkerOpts.mingw = -L/mingw64/lib -lSDL2 -lmingw32 -lSDL2main
