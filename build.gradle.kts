@@ -17,12 +17,26 @@ kotlin {
                 entryPoint = "com.gimlet2.browser.main"
             }
         }
+        compilations.getByName("main") {
+            cinterops {
+                val sdl2 by creating {
+                    defFile(project.file("sdl2.def"))
+                }
+            }
+        }
     }
     
     macosX64 {
         binaries {
             executable {
                 entryPoint = "com.gimlet2.browser.main"
+            }
+        }
+        compilations.getByName("main") {
+            cinterops {
+                val sdl2 by creating {
+                    defFile(project.file("sdl2.def"))
+                }
             }
         }
     }
@@ -33,12 +47,26 @@ kotlin {
                 entryPoint = "com.gimlet2.browser.main"
             }
         }
+        compilations.getByName("main") {
+            cinterops {
+                val sdl2 by creating {
+                    defFile(project.file("sdl2.def"))
+                }
+            }
+        }
     }
     
     mingwX64 {
         binaries {
             executable {
                 entryPoint = "com.gimlet2.browser.main"
+            }
+        }
+        compilations.getByName("main") {
+            cinterops {
+                val sdl2 by creating {
+                    defFile(project.file("sdl2.def"))
+                }
             }
         }
     }

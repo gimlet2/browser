@@ -81,6 +81,11 @@ class Framebuffer(val width: Int, val height: Int) {
     }
     
     /**
+     * Get pixel data for direct access (e.g., for SDL texture upload)
+     */
+    fun getPixels(): ByteArray = pixels
+    
+    /**
      * Save framebuffer as PPM image format (simple, no external dependencies)
      */
     fun savePPM(filename: String) {
