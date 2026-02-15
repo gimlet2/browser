@@ -1,15 +1,15 @@
 # Kotlin-Native Browser Rendering Engine
 
-A browser rendering engine built from scratch in **pure Kotlin-Native**, demonstrating HTML/CSS parsing, layout computation, and **actual graphics rendering** without JVM dependencies.
+A browser rendering engine built from scratch in **pure Kotlin-Native**, demonstrating HTML/CSS parsing, layout computation, and **interactive window display** without JVM dependencies.
 
 ## Features
 
 ### Custom Rendering Engine
 - **Built from Scratch**: Complete HTML/CSS rendering pipeline
 - **Pure Kotlin-Native**: No JVM, runs as native binary
-- **Zero Dependencies**: Custom parsers, no external libraries
+- **Zero Dependencies**: Custom parsers, no external libraries (only SDL2 for window)
 - **Cross-Platform**: Compiles to native binaries for Linux, macOS, Windows
-- **✨ Graphics Output**: Renders to actual images (PPM format)
+- **✨ Interactive Window**: SDL2-based window with real-time display
 
 ### Rendering Pipeline
 - **HTML Parser**: Recursive descent parser generating DOM trees
@@ -17,20 +17,22 @@ A browser rendering engine built from scratch in **pure Kotlin-Native**, demonst
 - **Layout Engine**: CSS box model with width/height/position calculation
 - **Paint Engine**: Display command generation for rendering backends
 - **Graphics Renderer**: Framebuffer-based pixel rendering with visual output
+- **Window Display**: SDL2 window showing rendered content
 
 ### Browser UI
-- **Visual Output**: Creates actual images of rendered HTML/CSS
-- **Browser Chrome**: Simulated browser toolbar and URL bar
+- **Interactive Window**: Native window (800x600) displaying rendered HTML/CSS
+- **Browser Chrome**: Gray toolbar at top
+- **URL Bar**: White bar showing current URL
 - **Styled Content**: Full CSS styling with colors, borders, padding
 - **Text Rendering**: Basic text display (8x12 bitmap font)
-- **Image Export**: PPM format (convertible to PNG/JPEG)
+- **Keyboard Controls**: ESC or Q to close window
 
 ## Architecture
 
 The rendering engine implements a complete browser rendering pipeline with graphics output:
 
 ```
-HTML/CSS Input → Parse → Style → Layout → Paint → Display Commands → Graphics → Image
+HTML/CSS Input → Parse → Style → Layout → Paint → Display Commands → Graphics → SDL2 Window
 ```
 
 ### Components
@@ -40,16 +42,35 @@ HTML/CSS Input → Parse → Style → Layout → Paint → Display Commands →
 3. **Style Tree** - Matches CSS rules to DOM elements
 4. **Layout Engine** - Computes box positions and dimensions
 5. **Paint Engine** - Generates rendering commands
-6. **Graphics Renderer** - Renders to framebuffer and outputs images
+6. **Graphics Renderer** - Renders to framebuffer
+7. **Window Display** - SDL2 window showing rendered content
 
 See [RENDERING_ENGINE.md](RENDERING_ENGINE.md) for detailed architecture.
 See [GRAPHICS_RENDERING.md](GRAPHICS_RENDERING.md) for graphics implementation details.
+See [SDL2_WINDOW.md](SDL2_WINDOW.md) for window display documentation.
 
 ## Requirements
 
 - Kotlin 2.3.0 or higher
 - Gradle 9.3+ (included via wrapper)
 - Kotlin-Native toolchain (auto-downloaded on first build)
+- **SDL2 library** (for window display)
+
+### Installing SDL2
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt-get install libsdl2-dev
+```
+
+**macOS:**
+```bash
+brew install sdl2
+```
+
+**Windows:**
+- Download from [libsdl.org](https://www.libsdl.org/)
+- Or use MSYS2: `pacman -S mingw-w64-x86_64-SDL2`
 
 ## Building
 
@@ -82,28 +103,36 @@ See [GRAPHICS_RENDERING.md](GRAPHICS_RENDERING.md) for graphics implementation d
 ./build/bin/mingwX64/releaseExecutable/browser.exe
 ```
 
+**A window will open displaying the rendered browser UI!**
+- Press **ESC** or **Q** to close the window
+- Or click the window's close button
+
 ## Demo Output
 
-The native application renders a browser-like UI with actual graphics:
+The native application opens an interactive SDL2 window:
 
 ```
 ============================================================
-Kotlin-Native Browser with Graphics UI
+Kotlin-Native Browser with Window UI
 ============================================================
 
 Rendering HTML page with browser UI...
-
 Generated 25 display commands
-Browser UI rendered to: browser_output.ppm
 
 ============================================================
+Opening browser window...
+Press ESC or Q to close, or close the window.
+============================================================
+
+SDL2 window initialized successfully
+Window opened. Press ESC or Q to close, or close the window.
 ```
 
-### Visual Output
+### Window Display
 
-The application creates an 800x600 pixel image showing:
+An 800x600 window opens showing:
 - **Browser Chrome**: Gray toolbar at the top
-- **URL Bar**: White input field with border showing "https://example.com"
+- **URL Bar**: White input field showing "https://example.com"
 - **Content Area**: White background with styled HTML content
 - **Heading**: "Welcome to Kotlin-Native Browser!" in dark blue
 - **Paragraphs**: Descriptive text in gray
